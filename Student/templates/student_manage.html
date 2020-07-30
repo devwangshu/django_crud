@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+{% load static %}
+<link rel="stylesheet" href="{% static 'bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'font-awesome.css' %}"> 
+
+<script src="{% static 'jquery-3.3.1.min.js' %}"></script>
+<script src="{% static 'bootstrap.min.js' %}"></script>
+
+</head>
+<body>
+<div class="container">
+    <div class="row">
+<section class="col-md-12">
+    <h1 class="page-header">Manage Student</h1>
+    <div class="row text-center">
+        <div class="col-md-12">
+            <a class="btn btn-primary " href="{% url 'Student:add_student' %}">Add Student</a>
+             <a class="btn btn-primary " href="{% url 'Student:show_graph' %}">Real-time data from Sensor</a>
+        </div>
+    </div>
+    <hr>
+    <!-- Table content -->
+    <div class="row">
+        <div class="col-md-12">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="content">
+                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th> Name</th>
+                            <th>Email</th>
+                            <th>Mob</th>
+                            <th class="text-center" colspan="2">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                            {% for book in object_list %}
+                        <tr>
+                            <td>{{ book.id }}</td>
+                            <td>{{ book.name }}</td>
+                            <td>{{ book.email }}</td>
+                            <td>{{ book.mob }}</td>
+
+
+                            <td class="text-center"><a href="{% url 'Student:student_edit' book.id %}" title="Edit Employee."><span class="btn btn-success">Edit</span></a></td>
+                            <td class="text-center"><a  class="delete"
+                                data-url="{% url 'Student:delete_student' book.id %}" title="Delete Student."><span
+                                class="btn btn-danger">Delete</span></a></td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div><!--end Table content -->
+</section>
+        </div>
+</div>
+
+
+
+
+  /*<!-- The Modal -->
+  <div class="modal" id="update_info" >
+    <div class="modal-dialog">
+      <div class="modal-content">
+      
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title">Are you sure?</h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        
+        <!-- Modal body -->
+        <div class="modal-body">
+         Do you really want to delete these records? This process cannot be undone.
+        </div>
+        
+        <!-- Modal footer -->
+         <div class="modal-footer">
+                <a id="sureDelete">
+                    <button type="button" class="btn btn-danger" id="delete">Yes</button>
+                </a>
+                <button type="button" class="btn btn-default" data-dismiss="modal">No</button>
+
+            </div>
+        
+      </div>
+    </div>
+  </div>
+</body>
+</html>
+
+
+
+<script>
+        $(document.body).on("click", ".delete", function () {
+            $("#sureDelete").attr("href", $(this).data('url'));
+            $('#update_info').modal('show');
+
+        });
+</script>
+
+

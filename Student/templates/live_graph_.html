@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Live Graph</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/css/bootstrap.min.css" integrity="sha384-GJzZqFGwb1QTTN6wy59ffF1BuGJpLSa9DkKMp0DgiMDm4iYMj70gZWKYbI706tWS" crossorigin="anonymous">
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+        {% load staticfiles %}
+        <script src="{% static 'jquery-3.3.1.min.js' %}"></script>
+        <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+
+</head>
+<body>
+    <center>
+    <label>Enter Com PORT:</label>
+    <input type="text" class="form-control col-md-2" name="com" id="comport">
+    <input type="submit" name="submit" id="btn_show" class="btn btn-primary">
+    <h1>Live data from Arduino Sensor</h1>
+        </center>
+
+    <div id="chartContainer" style="height: 450px; width:100%;"></div>
+</body>
+<script>
+$("#btn_show").click(function(){
+    com=$("#comport").val();
+    fill_graph_sensor(com);
+
+});
+function fill_graph_sensor(){
+
+    var dps = []; // dataPoints
+var chart = new CanvasJS.Chart("chartContainer", {
+	animationEnabled: true,
+	title: {
+		text: "Live Data"
+	},
+	axisX: {
+		title: "Time"
+	},
+	axisY: {
+		title: "data",
+		suffix: ""
+	},
+	data: [{
+		type: "line",
+		name: "CPU Utilization",
+		connectNullData: true,
+		//nullDataLineDashType: "solid",
+		xValueType: "dateTime",
+		xValueFormatString: "DD MMM hh:mm TT",
+		yValueFormatString: "#,##0.##\"mm\"",
+		dataPoints: dps
+	}]
+});
+
+var xVal = 0;
+var yVal = 100;
+var updateInterval = 4000;
+var dataLength = 20; // number of dataPoints visible at any point
+
+var updateChart = function () {
+
+    $.ajax({
+            type:"get",
+            url: "{% url 'Student:fetch_sensor_values_ajax' %}",
+            data: {
+                     'id': com
+                   },
+            success: function(data) {
+                console.log(data.result);
+                for(index = 0; index < data.result.length; index++) {
+                    var str_array = data.result[index].split(',');
+                    dps.push({
+			            x: Date.parse(str_array[1]),
+			            y: Number(str_array[0])
+		            });
+                   }
+                return data;
+                    },
+            error: function(){
+                    console.log("error he ji");
+                 }
+            });
+
+	if (dps.length > dataLength) {
+		dps.shift();
+	}
+
+	chart.render();
+};
+
+updateChart(dataLength);
+setInterval(function(){updateChart()}, updateInterval);
+
+
+}
+</script>
+</html>

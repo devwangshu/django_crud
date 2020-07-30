@@ -1,0 +1,45 @@
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+  {% load static %}
+<link rel="stylesheet" href="{% static 'bootstrap.min.css' %}">
+<link rel="stylesheet" href="{% static 'font-awesome.css' %}"> 
+<script src="{% static 'bootstrap.min.js' %}"></script>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <section class="col-md-12">
+            <h1 class="page-header">Add Student <h4>here you can insert student basic info</h4></h1>
+
+            <div class="row text-center">
+                    <div class="col-md-12">
+                        <a class="btn btn-primary" href="{% url 'Student:student_manage' %}">see The List of All Student</a>
+                        <a class="btn btn-primary " href="{% url 'Student:show_graph' %}">Real-time data from Sensor</a>
+                    </div>
+            </div>
+            <hr>
+            <!-- Table content -->
+            <div class="row">
+                <div class="form-group">
+                    <form class="form-horizontal" method="post" enctype="multipart/form-data">{% csrf_token %}
+
+
+                        <div class="form-group">
+                            <table  class="table table-responsive table-bordered">
+                            {{ form.as_table }}
+                                </table>
+                            <input type="submit" class="btn btn-primary" value="Submit"/>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </section>
+    </div>
+</div>
+</body>
+</html>
+<script src="{% static 'jquery-3.3.1.min.js' %}"></script>
